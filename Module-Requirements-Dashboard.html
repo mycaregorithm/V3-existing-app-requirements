@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCaregorithm - Module Requirements Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1052a2 0%, #0d4281 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #1052a2;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1052a2;
+            box-shadow: 0 0 0 3px rgba(16, 82, 162, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            border: 2px solid #1052a2;
+            background: white;
+            color: #1052a2;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: #1052a2;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #1052a2;
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1052a2 0%, #0d4281 100%);
+            color: white;
+            padding: 30px 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(16, 82, 162, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.8em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            opacity: 0.95;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: start;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 3px solid #f1c24c;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            cursor: pointer;
+            height: auto;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            border-color: #c49a3a;
+        }
+
+        .module-header {
+            background: linear-gradient(135deg, #1052a2 0%, #0d4281 100%);
+            color: white;
+            padding: 22px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-id {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .module-name {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .module-body {
+            padding: 25px;
+        }
+
+        .module-details {
+            display: none;
+            padding-top: 20px;
+            border-top: 2px solid #e3e8ef;
+            margin-top: 20px;
+        }
+
+        .module-card.expanded .module-details {
+            display: block;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .module-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 4px 6px 4px 0;
+        }
+
+        .badge-special {
+            background: #f1c24c;
+            color: #0d4281;
+            font-weight: 700;
+        }
+
+        .badge-gender {
+            background: #4a7bb8;
+            color: white;
+        }
+
+        .badge-images {
+            background: #1052a2;
+            color: white;
+        }
+
+        .badge-staging {
+            background: #e3e8ef;
+            color: #0d4281;
+            font-weight: 600;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 10px 0;
+        }
+
+        .feature-list li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #1052a2;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 2px solid #e3e8ef;
+        }
+
+        .section-header:hover {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 0 -15px 20px -15px;
+        }
+
+        .section-title {
+            color: #1052a2;
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        .expand-icon {
+            font-size: 1.2em;
+            color: #1052a2;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
+        .section-header.collapsed .expand-icon {
+            transform: rotate(-90deg);
+        }
+
+        .expand-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .expand-btn {
+            padding: 10px 20px;
+            border: 2px solid #f1c24c;
+            background: white;
+            color: #0d4281;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .expand-btn:hover {
+            background: #f1c24c;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #1052a2 0%, #0d4281 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .acronym-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .acronym-category {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #f1c24c;
+        }
+
+        .acronym-item {
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e3e8ef;
+        }
+
+        .acronym-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .acronym-item strong {
+            color: #1052a2;
+            font-size: 1.05em;
+        }
+
+        .acronym-detail {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .link-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #1052a2 0%, #0d4281 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 82, 162, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MyCaregorithm Module Requirements Dashboard</h1>
+            <p class="subtitle">Interactive reference for all 19 cancer modules</p>
+        </header>
+
+        <div class="footer">
+            <h3 style="margin-bottom: 15px; color: #1052a2;">Related Documentation</h3>
+            <a href="https://mycaregorithm.atlassian.net/wiki/spaces/MCGDEV/pages/331907076/MyCaregorithm+-+Module-Specific+Requirements+PRD" class="link-button" target="_blank">Module-Specific Requirements PRD</a>
+            <a href="https://mycaregorithm.atlassian.net/wiki/spaces/MCGDEV/pages/331808775/Module+Requirements+-+Quick+Reference+Guide" class="link-button" target="_blank">Quick Reference Guide</a>
+            <a href="https://mycaregorithm.atlassian.net/wiki/spaces/MCGDEV/pages/331808782/MyCaregorithm+Application+-+Current+State+PRD" class="link-button" target="_blank">Current State PRD</a>
+            <a href="https://mycaregorithm.atlassian.net/wiki/spaces/MCGDEV/pages/331677700/MyCaregorithm+V3+-+Technical+Architecture+PRD" class="link-button" target="_blank">Technical Architecture PRD</a>
+        </div>
+
+        <div class="controls" style="margin-top: 40px;">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search modules by name, features, or staging system...">
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Modules (19)</button>
+                <button class="filter-btn" data-filter="special">Special Config (8)</button>
+                <button class="filter-btn" data-filter="gender-specific">Gender Specific (4)</button>
+                <button class="filter-btn" data-filter="female-only">Female Only (2)</button>
+                <button class="filter-btn" data-filter="tnm">TNM Staging (12)</button>
+                <button class="filter-btn" data-filter="right-side">Right-Side Display (6)</button>
+            </div>
+
+            <div class="expand-controls">
+                <button class="expand-btn" id="expandAllBtn">Expand All Sections</button>
+                <button class="expand-btn" id="collapseAllBtn">Collapse All Sections</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">19</div>
+                    <div class="stat-label">Cancer Modules</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Module-Specific APIs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">250+</div>
+                    <div class="stat-label">Total Images</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Special Modules</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modules-grid" id="modulesGrid">
+            <!-- Modules will be dynamically inserted here -->
+        </div>
+
+        <div class="comparison-table">
+            <div class="section-header" id="comparisonHeader">
+                <h2 class="section-title">Quick Comparison Table</h2>
+                <span class="expand-icon">▼</span>
+            </div>
+            <div class="collapsible-content expanded" id="comparisonContent">
+                <table id="comparisonTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Module</th>
+                            <th>Images</th>
+                            <th>Gender</th>
+                            <th>Staging</th>
+                            <th>Special Features</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonBody">
+                        <!-- Table rows will be dynamically inserted -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="section-header" id="terminologyHeader">
+                <h2 class="section-title">Medical Terminology & Acronyms</h2>
+                <span class="expand-icon">▼</span>
+            </div>
+            <div class="collapsible-content expanded" id="terminologyContent">
+                <div class="acronym-grid">
+                    <div class="acronym-category">
+                        <h3 style="color: #0d4281; margin-bottom: 15px;">Staging Systems</h3>
+                        <div class="acronym-item">
+                            <strong>TNM</strong> - Tumor, Node, Metastasis staging system
+                            <div class="acronym-detail">T = Tumor size, N = Lymph nodes, M = Distant metastasis</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>FIGO</strong> - International Federation of Gynecology and Obstetrics
+                            <div class="acronym-detail">Used for cervical, uterine, and ovarian cancers</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>AJCC</strong> - American Joint Committee on Cancer
+                            <div class="acronym-detail">Used for melanoma staging</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>WHO</strong> - World Health Organization
+                            <div class="acronym-detail">Used for brain tumor grading</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>ISS/R-ISS</strong> - International Staging System / Revised ISS
+                            <div class="acronym-detail">Used for multiple myeloma</div>
+                        </div>
+                    </div>
+                    
+                    <div class="acronym-category">
+                        <h3 style="color: #0d4281; margin-bottom: 15px;">Cancer Types</h3>
+                        <div class="acronym-item">
+                            <strong>IDC</strong> - Invasive Ductal Carcinoma
+                            <div class="acronym-detail">Most common type of breast cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>ILC</strong> - Invasive Lobular Carcinoma
+                            <div class="acronym-detail">Second most common breast cancer type</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>DCIS</strong> - Ductal Carcinoma In Situ
+                            <div class="acronym-detail">Non-invasive breast cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>RCC</strong> - Renal Cell Carcinoma
+                            <div class="acronym-detail">Most common type of kidney cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>GIST</strong> - Gastrointestinal Stromal Tumor
+                            <div class="acronym-detail">Rare tumor of the digestive tract</div>
+                        </div>
+                    </div>
+                    
+                    <div class="acronym-category">
+                        <h3 style="color: #0d4281; margin-bottom: 15px;">Biomarkers & Tests</h3>
+                        <div class="acronym-item">
+                            <strong>PSA</strong> - Prostate-Specific Antigen
+                            <div class="acronym-detail">Blood test for prostate cancer screening</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>CA-125</strong> - Cancer Antigen 125
+                            <div class="acronym-detail">Tumor marker for ovarian cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>CA 19-9</strong> - Cancer Antigen 19-9
+                            <div class="acronym-detail">Tumor marker for pancreatic cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>HPV</strong> - Human Papillomavirus
+                            <div class="acronym-detail">Virus linked to cervical and head/neck cancers</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>EGFR</strong> - Epidermal Growth Factor Receptor
+                            <div class="acronym-detail">Gene mutation in lung cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>ALK/ROS1</strong> - Anaplastic Lymphoma Kinase / ROS Proto-Oncogene 1
+                            <div class="acronym-detail">Gene mutations in lung cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>PD-L1</strong> - Programmed Death-Ligand 1
+                            <div class="acronym-detail">Biomarker for immunotherapy treatment</div>
+                        </div>
+                    </div>
+                    
+                    <div class="acronym-category">
+                        <h3 style="color: #0d4281; margin-bottom: 15px;">Special Features</h3>
+                        <div class="acronym-item">
+                            <strong>Gleason Score</strong> - Prostate cancer grading system
+                            <div class="acronym-detail">Scores 1-5 for each of two areas, total 2-10</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>Breslow Depth</strong> - Melanoma thickness measurement
+                            <div class="acronym-detail">Measured in millimeters from skin surface</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>Clark Level</strong> - Melanoma depth classification
+                            <div class="acronym-detail">Levels I-V based on skin layer invasion</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>MSI</strong> - Microsatellite Instability
+                            <div class="acronym-detail">DNA repair defect in colon cancer</div>
+                        </div>
+                        <div class="acronym-item">
+                            <strong>LLS</strong> - Leukemia & Lymphoma Society
+                            <div class="acronym-detail">Partnership branding for myeloma module</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const modules = [
+            {
+                id: 1,
+                name: "Anal Cancer",
+                images: 12,
+                gender: "Male/Female",
+                staging: "TNM",
+                features: ["Right-side diagnosis", "6 anatomic views"],
+                pathology: ["Squamous Cell Carcinoma", "Adenocarcinoma"],
+                special: ["right-side"],
+                tags: ["tnm", "gender-specific", "right-side", "special"]
+            },
+            {
+                id: 2,
+                name: "Bladder Cancer",
+                images: 12,
+                gender: "Male/Female",
+                staging: "TNM",
+                features: ["Combined Bladder/Kidney views"],
+                pathology: ["Urothelial Carcinoma", "Squamous Cell Carcinoma", "Adenocarcinoma"],
+                special: [],
+                tags: ["tnm", "gender-specific"]
+            },
+            {
+                id: 3,
+                name: "Brain Cancer",
+                images: 12,
+                gender: "Neutral",
+                staging: "WHO",
+                features: ["WHO grading system", "IDH/MGMT markers"],
+                pathology: ["Glioblastoma", "Astrocytoma", "Oligodendroglioma", "Meningioma"],
+                special: [],
+                tags: ["special"]
+            },
+            {
+                id: 4,
+                name: "Breast Cancer",
+                images: 3,
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["Right-side diagnosis", "ER/PR/HER2 status", "Oncotype DX"],
+                pathology: ["IDC", "ILC", "DCIS"],
+                special: ["right-side"],
+                tags: ["tnm", "right-side", "special"]
+            },
+            {
+                id: 5,
+                name: "Cervix/Uterus Cancer",
+                images: "18+",
+                gender: "Female Only",
+                staging: "FIGO",
+                features: ["HPV status", "Multiple pelvic views"],
+                pathology: ["Squamous Cell Carcinoma", "Adenocarcinoma", "Adenosquamous"],
+                special: [],
+                tags: ["female-only", "special"]
+            },
+            {
+                id: 6,
+                name: "Colon Cancer",
+                images: 4,
+                gender: "Male/Female",
+                staging: "TNM",
+                features: ["MSI status", "Tumor location tracking"],
+                pathology: ["Adenocarcinoma", "Mucinous Adenocarcinoma", "Signet Ring Cell"],
+                special: [],
+                tags: ["tnm", "gender-specific"]
+            },
+            {
+                id: 7,
+                name: "Esophagus/Stomach Cancer",
+                images: "13+",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["Siewert classification", "Combined GI visualization"],
+                pathology: ["Adenocarcinoma", "Squamous Cell Carcinoma", "GIST"],
+                special: [],
+                tags: ["tnm"]
+            },
+            {
+                id: 8,
+                name: "Kidney Cancer",
+                images: "18+",
+                gender: "Male/Female",
+                staging: "TNM",
+                features: ["RCC subtypes", "Multiple cross-sections"],
+                pathology: ["Clear Cell RCC", "Papillary RCC", "Chromophobe RCC"],
+                special: [],
+                tags: ["tnm", "gender-specific"]
+            },
+            {
+                id: 9,
+                name: "Lung Cancer",
+                images: 12,
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["EGFR/ALK/ROS1/PD-L1 biomarkers", "Lobe-specific locations"],
+                pathology: ["Adenocarcinoma", "Squamous Cell", "Small Cell", "Large Cell"],
+                special: [],
+                tags: ["tnm", "special"]
+            },
+            {
+                id: 10,
+                name: "Melanoma",
+                images: "16+",
+                gender: "Neutral",
+                staging: "AJCC",
+                features: ["Right-side diagnosis", "Breslow depth", "Clark level", "Full body mapping"],
+                pathology: ["Superficial Spreading", "Nodular", "Lentigo Maligna", "Acral Lentiginous"],
+                special: ["right-side"],
+                tags: ["right-side", "special"]
+            },
+            {
+                id: 11,
+                name: "Oropharynx/Nasopharynx Cancer",
+                images: "8+",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["HPV status"],
+                pathology: ["Squamous Cell Carcinoma", "Adenocarcinoma"],
+                special: [],
+                tags: ["tnm"]
+            },
+            {
+                id: 12,
+                name: "Ovarian Cancer",
+                images: "12+",
+                gender: "Female Only",
+                staging: "FIGO",
+                features: ["CA-125 levels", "BRCA mutation status"],
+                pathology: ["High-Grade Serous", "Low-Grade Serous", "Endometrioid", "Clear Cell", "Mucinous"],
+                special: [],
+                tags: ["female-only", "special"]
+            },
+            {
+                id: 13,
+                name: "Pancreas Cancer",
+                images: "Variable",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["CA 19-9 levels", "Bilirubin levels", "Resectability status"],
+                pathology: ["Ductal Adenocarcinoma", "Neuroendocrine Tumor"],
+                special: [],
+                tags: ["tnm", "special"]
+            },
+            {
+                id: 14,
+                name: "Prostate Cancer",
+                images: 12,
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["GLEASON SCORING", "Right-side diagnosis", "PSA levels", "Core sampling"],
+                pathology: ["Adenocarcinoma"],
+                special: ["right-side", "gleason"],
+                tags: ["tnm", "right-side", "special"]
+            },
+            {
+                id: 15,
+                name: "Rectal Cancer",
+                images: "25+",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["Right-side diagnosis", "Distance from anal verge", "Mesorectal fascia"],
+                pathology: ["Adenocarcinoma", "Mucinous Adenocarcinoma"],
+                special: ["right-side"],
+                tags: ["tnm", "right-side", "special"]
+            },
+            {
+                id: 16,
+                name: "Sarcoma",
+                images: "21+",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["Right-side diagnosis", "FNCLCC grading", "Full body mapping"],
+                pathology: ["Liposarcoma", "Leiomyosarcoma", "UPS", "Synovial Sarcoma"],
+                special: ["right-side"],
+                tags: ["tnm", "right-side", "special"]
+            },
+            {
+                id: 17,
+                name: "Thyroid Cancer",
+                images: "13+",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["BRAF mutation status", "Thyroglobulin levels"],
+                pathology: ["Papillary", "Follicular", "Medullary", "Anaplastic"],
+                special: [],
+                tags: ["tnm"]
+            },
+            {
+                id: 18,
+                name: "Larynx/Oral Cavity Cancer",
+                images: "10+",
+                gender: "Neutral",
+                staging: "TNM",
+                features: ["HPV status", "Oral cavity subsites"],
+                pathology: ["Squamous Cell Carcinoma"],
+                special: [],
+                tags: ["tnm"]
+            },
+            {
+                id: 19,
+                name: "Myeloma (Multiple Myeloma)",
+                images: 22,
+                gender: "Neutral",
+                staging: "ISS/R-ISS",
+                features: ["LLS PARTNERSHIP BRANDING", "Extended patient fields", "M-protein levels", "ISS staging"],
+                pathology: ["IgG Myeloma", "IgA Myeloma", "Light Chain Myeloma"],
+                special: ["lls-branding"],
+                tags: ["special"]
+            }
+        ];
+
+        function createModuleCard(module) {
+            const specialBadges = module.special.map(s => 
+                `<span class="badge badge-special">${s.toUpperCase()}</span>`
+            ).join('');
+
+            return `
+                <div class="module-card" data-id="${module.id}" data-tags="${module.tags.join(' ')}">
+                    <div class="module-header">
+                        <div>
+                            <div class="module-id">Module ${module.id}</div>
+                            <div class="module-name">${module.name}</div>
+                        </div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                    <div class="module-body">
+                        <div>
+                            <span class="badge badge-images">${module.images} images</span>
+                            <span class="badge badge-gender">${module.gender}</span>
+                            <span class="badge badge-staging">${module.staging}</span>
+                            ${specialBadges}
+                        </div>
+                        <div class="module-details">
+                            <div class="info-row">
+                                <span class="info-label">Pathology Types:</span>
+                                <span class="info-value">${module.pathology.length}</span>
+                            </div>
+                            <ul class="feature-list">
+                                ${module.features.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                            <div style="margin-top: 15px;">
+                                <strong>Pathology Options:</strong>
+                                <div style="margin-top: 5px; color: #666;">
+                                    ${module.pathology.join(', ')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createTableRow(module) {
+            const specialFeatures = module.special.length > 0 
+                ? module.special.map(s => s.toUpperCase()).join(', ')
+                : '-';
+            
+            return `
+                <tr>
+                    <td><strong>${module.id}</strong></td>
+                    <td>${module.name}</td>
+                    <td>${module.images}</td>
+                    <td>${module.gender}</td>
+                    <td>${module.staging}</td>
+                    <td>${specialFeatures}</td>
+                </tr>
+            `;
+        }
+
+        function renderModules(filteredModules = modules) {
+            const grid = document.getElementById('modulesGrid');
+            grid.innerHTML = filteredModules.map(m => createModuleCard(m)).join('');
+
+            // Add click handlers for expand/collapse
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('expanded');
+                });
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('comparisonBody');
+            tbody.innerHTML = modules.map(m => createTableRow(m)).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.module-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                const cards = document.querySelectorAll('.module-card');
+
+                if (filter === 'all') {
+                    cards.forEach(card => card.classList.remove('hidden'));
+                } else {
+                    cards.forEach(card => {
+                        const tags = card.dataset.tags;
+                        if (tags.includes(filter)) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Collapsible sections functionality
+        function setupCollapsibleSections() {
+            const sections = [
+                { header: 'comparisonHeader', content: 'comparisonContent' },
+                { header: 'terminologyHeader', content: 'terminologyContent' }
+            ];
+
+            sections.forEach(section => {
+                const header = document.getElementById(section.header);
+                const content = document.getElementById(section.content);
+                
+                if (header && content) {
+                    header.addEventListener('click', () => {
+                        toggleSection(header, content);
+                    });
+                }
+            });
+        }
+
+        function toggleSection(header, content) {
+            const isCollapsed = content.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                content.classList.remove('collapsed');
+                content.classList.add('expanded');
+                header.classList.remove('collapsed');
+            } else {
+                content.classList.remove('expanded');
+                content.classList.add('collapsed');
+                header.classList.add('collapsed');
+            }
+        }
+
+        function expandAllSections() {
+            const sections = [
+                { header: 'comparisonHeader', content: 'comparisonContent' },
+                { header: 'terminologyHeader', content: 'terminologyContent' }
+            ];
+
+            sections.forEach(section => {
+                const header = document.getElementById(section.header);
+                const content = document.getElementById(section.content);
+                
+                if (header && content) {
+                    content.classList.remove('collapsed');
+                    content.classList.add('expanded');
+                    header.classList.remove('collapsed');
+                }
+            });
+        }
+
+        function collapseAllSections() {
+            const sections = [
+                { header: 'comparisonHeader', content: 'comparisonContent' },
+                { header: 'terminologyHeader', content: 'terminologyContent' }
+            ];
+
+            sections.forEach(section => {
+                const header = document.getElementById(section.header);
+                const content = document.getElementById(section.content);
+                
+                if (header && content) {
+                    content.classList.remove('expanded');
+                    content.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
+            });
+        }
+
+        function setupExpandControls() {
+            const expandAllBtn = document.getElementById('expandAllBtn');
+            const collapseAllBtn = document.getElementById('collapseAllBtn');
+            
+            if (expandAllBtn) {
+                expandAllBtn.addEventListener('click', expandAllSections);
+            }
+            
+            if (collapseAllBtn) {
+                collapseAllBtn.addEventListener('click', collapseAllSections);
+            }
+        }
+
+        // Initialize
+        renderModules();
+        renderTable();
+        setupCollapsibleSections();
+        setupExpandControls();
+    </script>
+</body>
+</html>
+
